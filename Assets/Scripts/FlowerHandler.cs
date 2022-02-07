@@ -73,7 +73,13 @@ public class FlowerHandler : MonoBehaviour
     public int moveFlowerToTile(GameObject flower, int toTile)
     {
         int fromTile = getFlowerPosition(flower);
+        return moveFromTileToTile(fromTile, toTile);
+    }
+
+    public int moveFromTileToTile(int fromTile, int toTile) {
         int result = canMoveFromTo(fromTile, toTile);
+
+        GameObject flower = flowers[fromTile / 9, fromTile % 9];
 
         if (result == OCCUPIED || result == NO_PATH)
         {
@@ -258,5 +264,13 @@ public class FlowerHandler : MonoBehaviour
         }
 
         return false;
+    }
+
+    public GameObject[,] getFlowers() {
+        return flowers;
+    }
+
+    public GameObject[] getNextThreeFlowers() {
+        return nextThreeFlowers;
     }
 }

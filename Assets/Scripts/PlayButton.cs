@@ -23,6 +23,7 @@ public class PlayButton : MonoBehaviour
 
     public void changeScene()
     {
+        CrossSceneSettings.Ai = false;
         SceneManager.LoadScene("GameScene");
     }
 }

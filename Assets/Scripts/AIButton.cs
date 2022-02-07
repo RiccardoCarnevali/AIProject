@@ -22,6 +22,7 @@ public class AIButton : MonoBehaviour
 
     public void changeScene()
     {
+        CrossSceneSettings.Ai = true;
         SceneManager.LoadScene("GameScene");
     }
 }

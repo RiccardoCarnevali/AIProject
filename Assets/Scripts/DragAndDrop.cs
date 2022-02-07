@@ -25,9 +25,11 @@ public class DragAndDrop : MonoBehaviour
 
     void OnMouseUp()
     {
-        if(!gameFlow.isFlowerSelected() && !gameFlow.isGameOver()) {
-            selected = true;
-            gameFlow.selectFlower(gameObject);
+        if(!CrossSceneSettings.Ai) {
+            if(!gameFlow.isFlowerSelected() && !gameFlow.isGameOver()) {
+                selected = true;
+                gameFlow.selectFlower(gameObject);
+            }
         }
     }
 

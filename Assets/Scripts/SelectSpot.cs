@@ -13,8 +13,10 @@ public class SelectSpot : MonoBehaviour
         gameFlow = GameObject.Find("GameController").GetComponent<GameFlow>();
     }
     void OnMouseUp() {
-        if(gameFlow.isFlowerSelected()) {
-            gameFlow.moveFlowerToTile(tileNum);
+        if(!CrossSceneSettings.Ai) {
+            if(gameFlow.isFlowerSelected()) {
+                gameFlow.moveFlowerToTile(tileNum);
+            }
         }
     }
 
