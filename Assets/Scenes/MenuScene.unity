@@ -666,7 +666,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.6962118, y: 0.1765371}
   m_AnchorMax: {x: 0.818, y: 0.27323148}
-  m_AnchoredPosition: {x: -0.12471008, y: 0.12130737}
+  m_AnchoredPosition: {x: -0.12472534, y: 0.12130737}
   m_SizeDelta: {x: 0.2651999, y: 0.17329979}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1399352968
@@ -821,7 +821,6 @@ GameObject:
   - component: {fileID: 1536271600}
   - component: {fileID: 1536271599}
   - component: {fileID: 1536271598}
-  - component: {fileID: 1536271597}
   - component: {fileID: 1536271596}
   m_Layer: 5
   m_Name: AiButton
@@ -861,18 +860,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d6658569b87cba4fa8d505f513391ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1536271597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1536271594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddb7d948324a150448cf3176302a2605, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1536271598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -890,8 +877,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1536271597}
-          m_TargetAssemblyTypeName: PlayButton, Assembly-CSharp
+        - m_Target: {fileID: 1536271596}
+          m_TargetAssemblyTypeName: AIButton, Assembly-CSharp
           m_MethodName: showImage
           m_Mode: 6
           m_Arguments:
@@ -906,8 +893,8 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1536271597}
-          m_TargetAssemblyTypeName: PlayButton, Assembly-CSharp
+        - m_Target: {fileID: 1536271596}
+          m_TargetAssemblyTypeName: AIButton, Assembly-CSharp
           m_MethodName: showImage
           m_Mode: 6
           m_Arguments:

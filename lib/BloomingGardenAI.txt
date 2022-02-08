@@ -34,13 +34,13 @@ newTile(Flower, X, Y) :- tile(Flower, X, Y), not changedTile(X, Y).
 newTile("none", X, Y) :- makeMove(X, Y, _, _).
 newTile(Flower, X2, Y2) :- makeMove(X1, Y1, X2, Y2), tile(Flower, X1, Y1).
 
-%Calcola il numero di fiori uguali nella stessa colonna
+%Calcola il numero di fiori uguali nella stessa colonna dopo aver effettuato la mossa
 sameFlowerInColumn(X2, Y2, Flower) :- makeMove(X1, Y1, X2, Y2), newTile(Flower, X2, Y2).
 sameFlowerInColumn(X2 + 1, Y2, Flower) :- sameFlowerInColumn(X2, Y2, Flower), newTile(Flower, X2 + 1, Y2).
 sameFlowerInColumn(X2 - 1, Y2, Flower) :- sameFlowerInColumn(X2, Y2, Flower), newTile(Flower, X2 - 1, Y2).
 sameFlowerInColumnCount(Count) :- Count = #count{X : sameFlowerInColumn(X, _, _)}.
 
-%Calcola il numero di fiori uguali nella stessa riga
+%Calcola il numero di fiori uguali nella stessa riga dopo aver effettuato la mossa
 sameFlowerInRow(X2, Y2, Flower) :- makeMove(X1, Y1, X2, Y2), newTile(Flower, X2, Y2).
 sameFlowerInRow(X2, Y2 + 1, Flower) :- sameFlowerInRow(X2, Y2, Flower), newTile(Flower, X2, Y2 + 1).
 sameFlowerInRow(X2, Y2 - 1, Flower) :- sameFlowerInRow(X2, Y2, Flower), newTile(Flower, X2, Y2 - 1).
@@ -50,16 +50,16 @@ sameFlowerInRowCount(Count) :- Count = #count{Y : sameFlowerInRow(_, Y, _)}.
 %Si paga di meno ad un livello intermedio più sono i fiori che vengono messi in riga o in colonna
 %Si paga di meno ad un livello alto più sono i fiori che vengono distrutti
 %Se non vengono distrutti fiori si paga il costo massimo al livello alto
-:~ sameFlowerInColumnCount(Count), Count >= 5. [9 - Count@5, column]
-:~ sameFlowerInColumnCount(Count), Count < 5. [9 - Count@3, column]
-:~ sameFlowerInColumnCount(Count), Count < 5. [9@5, column]
-:~ sameFlowerInRowCount(Count), Count >= 5. [9 - Count@5, row]
-:~ sameFlowerInRowCount(Count), Count < 5. [9 - Count@3, row]
-:~ sameFlowerInRowCount(Count), Count < 5. [9@5,row]
+:~ sameFlowerInColumnCount(Count), Count >= 5. [9 - Count@6, column]
+:~ sameFlowerInColumnCount(Count), Count < 5. [81 - Count * Count@5, column] %L'elevazione al quadrato serve per preferire colonne più lunghe rispetto a somme di righe e colonne con dimensione equivalente
+:~ sameFlowerInColumnCount(Count), Count < 5. [9@6, column]
+:~ sameFlowerInRowCount(Count), Count >= 5. [9 - Count@6, row]
+:~ sameFlowerInRowCount(Count), Count < 5. [81 - Count * Count@5, row] %L'elevazione al quadrato serve per preferire righe più lunghe rispetto a somme di righe e colonne con dimensione equivalente
+:~ sameFlowerInRowCount(Count), Count < 5. [9@6,row]
 
 %È preferibile muovere un fiore dello stesso tipo di quelli che stanno per arrivare.
 %Più sono i fiori che stanno per arrivare e non sono dello stesso tipo di quello che si sta muovendo, più si paga.
-:~ makeMove(X1, Y1, X2, Y2), newTile(Flower1, X2, Y2), next(Flower2, N), Flower1 != Flower2. [N@2]
+:~ makeMove(X1, Y1, X2, Y2), newTile(Flower1, X2, Y2), next(Flower2, N), Flower1 != Flower2. [N@1]
 
 %Calcola le dimensioni delle colonne di fiori uguali ma di tipo diverso da quello che si sta muovendo la cui formazione verrà quindi bloccata dalla mossa
 differentFlowerInColumn(X2 + 1, Y2, Flower2) :- makeMove(X1, Y1, X2, Y2), newTile(Flower, X2, Y2), newTile(Flower2, X2 + 1, Y2), Flower2 != "none", Flower2 != Flower.
@@ -77,7 +77,45 @@ differentFlowerInRowCount(Count, Flower) :- differentFlowerInRow(_, _, Flower), 
 
 %Si paga ad un livello alto se si blocca una riga o colonna che sta per essere distrutta (viene comunque data priorità alla distruzione dei fiori)
 %Si paga ad un livello intermedio se si blocca una riga o colonna di fiori in via di formazione (si paga di più a seconda della grandezza della riga o colonna che si blocca)
-:~ differentFlowerInColumnCount(Count, Flower), Count >= 4. [Count@4, Flower, Count]
-:~ differentFlowerInColumnCount(Count, Flower), Count < 4. [Count@3, Flower, Count]
-:~ differentFlowerInRowCount(Count, Flower), Count >= 4. [Count@4, Flower, Count]
-:~ differentFlowerInRowCount(Count, Flower), Count < 4. [Count@3, Flower, Count]
+:~ differentFlowerInColumnCount(Count, Flower), Count >= 4. [Count@3, Flower, Count, differentColumn]
+:~ differentFlowerInColumnCount(Count, Flower), Count < 4. [Count@2, Flower, Count, differentColumn]
+:~ differentFlowerInRowCount(Count, Flower), Count >= 4. [Count@3, Flower, Count, differentRow]
+:~ differentFlowerInRowCount(Count, Flower), Count < 4. [Count@2, Flower, Count, differentRow]
+
+%Calcola il numero di fiori uguali nella stessa colonna prima di aver effettuato la mossa
+oldSameFlowerInColumn(X1, Y1, Flower) :- makeMove(X1, Y1, X2, Y2), tile(Flower, X1, Y1).
+oldSameFlowerInColumn(X1 + 1, Y1, Flower) :- oldSameFlowerInColumn(X1, Y1, Flower), tile(Flower, X1 + 1, Y1).
+oldSameFlowerInColumn(X1 - 1, Y1, Flower) :- oldSameFlowerInColumn(X1, Y1, Flower), tile(Flower, X1 - 1, Y1).
+oldSameFlowerInColumnCount(Count) :- Count = #count{X : oldSameFlowerInColumn(X, _, _)}.
+
+%Calcola il numero di fiori uguali nella stessa riga prima di aver effettuato la mossa
+oldSameFlowerInRow(X1, Y1, Flower) :- makeMove(X1, Y1, X2, Y2), tile(Flower, X1, Y1).
+oldSameFlowerInRow(X1, Y1 + 1, Flower) :- oldSameFlowerInRow(X1, Y1, Flower), tile(Flower, X1, Y1 + 1).
+oldSameFlowerInRow(X1, Y1 - 1, Flower) :- oldSameFlowerInRow(X1, Y1, Flower), tile(Flower, X1, Y1 - 1).
+oldSameFlowerInRowCount(Count) :- Count = #count{Y : oldSameFlowerInRow(_, Y, _)}.
+
+%Si paga ad un livello intermedio se si sposta un fiore che era in una riga o colonna in via di formazione (si paga in base alla dimensione di tale riga o colonna)
+:~ oldSameFlowerInColumnCount(Count). [Count * Count@5, oldColumn]
+:~ oldSameFlowerInRowCount(Count). [Count * Count@5, oldRow]
+
+%Calcola le dimensioni delle colonne di fiori diversi da quello che si sta muovendo adiacenti al fiore prima che venga mosso
+oldDifferentFlowerInColumn(X1 + 1, Y1, Flower2) :- makeMove(X1, Y1, X2, Y2), tile(Flower, X1, Y1), tile(Flower2, X1 + 1, Y1), Flower2 != "none", Flower2 != Flower.
+oldDifferentFlowerInColumn(X1 - 1, Y1, Flower2) :- makeMove(X1, Y1, X2, Y2), tile(Flower, X1, Y1), tile(Flower2, X1 - 1, Y1), Flower2 != "none", Flower2 != Flower.
+oldDifferentFlowerInColumn(X1 + 1, Y1, Flower) :- oldDifferentFlowerInColumn(X1, Y1, Flower), tile(Flower, X1 + 1, Y1).
+oldDifferentFlowerInColumn(X1 - 1, Y1, Flower) :- oldDifferentFlowerInColumn(X1, Y1, Flower), tile(Flower, X1 - 1, Y1).
+oldDifferentFlowerInColumnCount(Count, Flower) :- oldDifferentFlowerInColumn(_, _, Flower), Count = #count{X : oldDifferentFlowerInColumn(X, _, Flower)}.
+
+%Calcola le dimensioni delle righe di fiori diversi da quello che si sta muovendo adiacenti al fiore prima che venga mosso
+oldDifferentFlowerInRow(X1, Y1 + 1, Flower2) :- makeMove(X1, Y1, X2, Y2), tile(Flower, X1, Y1), tile(Flower2, X1, Y1 + 1), Flower2 != "none", Flower2 != Flower.
+oldDifferentFlowerInRow(X1, Y1 - 1, Flower2) :- makeMove(X1, Y1, X2, Y2), tile(Flower, X1, Y1), tile(Flower2, X1, Y1 - 1), Flower2 != "none", Flower2 != Flower.
+oldDifferentFlowerInRow(X1, Y1 + 1, Flower) :- oldDifferentFlowerInRow(X1, Y1, Flower), tile(Flower, X1, Y1 + 1).
+oldDifferentFlowerInRow(X1, Y1 - 1, Flower) :- oldDifferentFlowerInRow(X1, Y1, Flower), tile(Flower, X1, Y1 - 1).
+oldDifferentFlowerInRowCount(Count, Flower) :- oldDifferentFlowerInRow(_, _, Flower), Count = #count{Y : oldDifferentFlowerInRow(_, Y, Flower)}.
+
+%Incentiva a muovere fiori per sbloccare righe e colonne in via di formazione
+:~ oldDifferentFlowerInColumnCount(Count, Flower), Count >= 4. [9 - Count@4, Flower, Count, oldDifferentColumn]
+:~ oldDifferentFlowerInRowCount(Count, Flower), Count >= 4. [9 - Count@4, Flower, Count, oldDifferentRow]
+isFreeingBigRow :- oldDifferentFlowerInRowCount(Count, _), Count >= 4.
+isFreeingBigColumn :- oldDifferentFlowerInColumnCount(Count, _), Count >= 4.
+:~ not isFreeingBigColumn. [9@4, oldDifferentColumn]
+:~ not isFreeingBigRow. [9@4, oldDifferentRow]

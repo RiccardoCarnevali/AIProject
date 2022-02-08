@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
 
 public class FlowerHandler : MonoBehaviour
 {
+    public GameObject aimove;
+    public GameObject flowersPlaced;
     private List<int> unusedTiles = new List<int>();
     private GameObject[,] tiles;
     public GameObject[] flowersPrefabs = new GameObject[7];
@@ -34,6 +37,8 @@ public class FlowerHandler : MonoBehaviour
     public void manualUpdate()
     {
         placeNextThreeFlowers();
+        flowersPlaced.SetActive(true);
+        aimove.SetActive(false);
         chooseNextThreeFlowers();
     }
 

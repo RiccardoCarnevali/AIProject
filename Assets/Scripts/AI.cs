@@ -1,18 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using it.unical.mat.embasp.@base;
 using it.unical.mat.embasp.languages;
 using it.unical.mat.embasp.languages.asp;
 using it.unical.mat.embasp.platforms.desktop;
 using it.unical.mat.embasp.specializations.dlv2.desktop;
-using UnityEngine;
 public class AI {
     private static AI instance = null;
     private Handler handler;
     private InputProgram fixedProgram;
     private InputProgram variableProgram;
     private GameFlow gameFlow;
+    private MakeMove nextMove;
+    private bool moveMade;
+    private bool moveBeingMade;
     private AI(GameFlow gameFlow) {
         this.gameFlow = gameFlow;
 
@@ -31,6 +34,10 @@ public class AI {
 
         variableProgram = new ASPInputProgram();
         handler.AddProgram(variableProgram);
+
+        nextMove = null;
+        moveMade = false;
+        moveBeingMade = false;
     }
 
     public static AI getInstance(GameFlow gameFlow) {
@@ -39,27 +46,51 @@ public class AI {
         return instance;
     }
 
-    public MakeMove getNextMove(Tile[] tiles, Next[] nexts) {
-        variableProgram.ClearAll();
+    public MakeMove getNextMove() {
+        return nextMove;
+    }
 
+    public void startNextMove(Tile[] tiles, Next[] nexts) {
+        moveMade = false;
+        if(!moveBeingMade) {
+            moveBeingMade = true;
+            Thread thread = new Thread(()=>calculateMove(tiles, nexts));
+            thread.Start();
+        } 
+    }
+
+    private void calculateMove(Tile[] tiles, Next[] nexts) {
+        variableProgram.ClearAll();
         foreach(Tile tile in tiles)
             variableProgram.AddObjectInput(tile);
         foreach(Next next in nexts)
             variableProgram.AddObjectInput(next);
         Output output = handler.StartSync();
-
         AnswerSets answerSets = (AnswerSets) output;
         AnswerSet optimalAnswerSet = answerSets.GetOptimalAnswerSets()[0];
 
         foreach(object obj in optimalAnswerSet.Atoms) {
             if(typeof(MakeMove).IsInstanceOfType(obj)) {
                 MakeMove move = (MakeMove) obj;
-                return move;
+                this.nextMove = move;
+                break;
             }
         }
-        return null;
+        moveMade = true;
+        moveBeingMade = false;
     }
 
+    public bool isMoveMade() {
+        return moveMade;
+    }
+
+    public void makeMove() {
+        moveMade = false;
+    }
+
+    public bool isMoveBeingMade() {
+        return moveBeingMade;
+    }
 }
 
 [Id("tile")]
