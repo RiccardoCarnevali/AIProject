@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class GameFlow : MonoBehaviour
 {
-    public GameObject aimove;
     public GameObject flowersPlaced;
     private GameObject selectedFlower = null;
     private FlowerHandler flowerGenerator;
@@ -28,50 +27,61 @@ public class GameFlow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!gameOver && !blockEverything) {
-            if(nextStep) {
+        if (!gameOver && !blockEverything)
+        {
+            if (nextStep)
+            {
+                Debug.Log("next step");
                 flowerGenerator.manualUpdate();
-                if(gameOver)
+                if (gameOver)
                     return;
                 nextStep = false;
             }
             MakeMove nextMove;
-            if(CrossSceneSettings.Ai) {
-                if(AI.getInstance(this).isMoveMade()) {
+            if (CrossSceneSettings.Ai)
+            {
+                if (AI.getInstance(this).isMoveMade())
+                {
+                    Debug.Log("making move");
                     nextMove = AI.getInstance(this).getNextMove();
                     moveFromTileToTile(nextMove.getX1() * 9 + nextMove.getY1(), nextMove.getX2() * 9 + nextMove.getY2());
                     AI.getInstance(this).makeMove();
                     //Debug.Log("moved from " + nextMove.getX1() + "," + nextMove.getY1() + " " + nextMove.getX2() + "," + nextMove.getY2());
                     flowersPlaced.SetActive(false);
-                    aimove.SetActive(true);
                     StartCoroutine("block");
                 }
-                else if(!AI.getInstance(this).isMoveBeingMade()) {
+                else if (!AI.getInstance(this).isMoveBeingMade())
+                {
                     GameObject[,] flowers = flowerGenerator.getFlowers();
                     GameObject[] nextThreeFlowers = flowerGenerator.getNextThreeFlowers();
 
                     Tile[] tiles = new Tile[81];
 
-                    for(int i = 0; i < 81; ++i) {
+                    for (int i = 0; i < 81; ++i)
+                    {
                         string flowerColor = flowers[i / 9, i % 9] == null ? "none" : flowers[i / 9, i % 9].name.Substring(0, flowers[i / 9, i % 9].name.IndexOf("F"));
                         tiles[i] = new Tile(flowerColor, i / 9, i % 9);
                     }
 
                     Dictionary<string, int> flowerCount = new Dictionary<string, int>();
-                    
-                    foreach(GameObject flower in nextThreeFlowers) {
+
+                    foreach (GameObject flower in nextThreeFlowers)
+                    {
                         string flowerColor = flower.name.Substring(0, flower.name.IndexOf("F"));
-                        if(!flowerCount.ContainsKey(flowerColor)) {
+                        if (!flowerCount.ContainsKey(flowerColor))
+                        {
                             flowerCount.Add(flowerColor, 1);
                         }
-                        else {
+                        else
+                        {
                             flowerCount[flowerColor] = flowerCount[flowerColor] + 1;
                         }
                     }
 
                     List<Next> nexts = new List<Next>();
 
-                    foreach(KeyValuePair<string, int> entry in flowerCount) {
+                    foreach (KeyValuePair<string, int> entry in flowerCount)
+                    {
                         nexts.Add(new Next(entry.Key, entry.Value));
                     }
                     AI.getInstance(this).startNextMove(tiles, nexts.ToArray());
@@ -80,60 +90,73 @@ public class GameFlow : MonoBehaviour
         }
     }
 
-    public bool isFlowerSelected() {
+    public bool isFlowerSelected()
+    {
         return selectedFlower != null;
     }
 
-    public void selectFlower(GameObject flower) {
+    public void selectFlower(GameObject flower)
+    {
         selectedFlower = flower;
     }
 
-    public void moveFlowerToTile(int toTile) {
+    public void moveFlowerToTile(int toTile)
+    {
         int result = flowerGenerator.moveFlowerToTile(selectedFlower, toTile);
 
-        if(result == FlowerHandler.SAME_SPOT || result == FlowerHandler.DESTROYED_FLOWERS) {
+        if (result == FlowerHandler.SAME_SPOT || result == FlowerHandler.DESTROYED_FLOWERS)
+        {
             selectedFlower = null;
         }
-        else if(result == FlowerHandler.SUCCESS) {
+        else if (result == FlowerHandler.SUCCESS)
+        {
             selectedFlower = null;
             nextStep = true;
         }
     }
 
-    private void moveFromTileToTile(int fromTile, int toTile) {
+    private void moveFromTileToTile(int fromTile, int toTile)
+    {
         int result = flowerGenerator.moveFromTileToTile(fromTile, toTile);
 
-        if(result == FlowerHandler.SAME_SPOT || result == FlowerHandler.DESTROYED_FLOWERS) {
+        if (result == FlowerHandler.SAME_SPOT || result == FlowerHandler.DESTROYED_FLOWERS)
+        {
             selectedFlower = null;
         }
-        else if(result == FlowerHandler.SUCCESS) {
+        else if (result == FlowerHandler.SUCCESS)
+        {
             selectedFlower = null;
             nextStep = true;
         }
     }
 
-    public void addScore(int num) {
-        if(score + num > 999)
+    public void addScore(int num)
+    {
+        if (score + num > 999)
             score = 999;
         else
             score += num;
         GameObject.Find("ScoreNum").GetComponent<Text>().text = score.ToString();
     }
 
-    public void endGame() {
-        if(!gameOver) {
+    public void endGame()
+    {
+        if (!gameOver)
+        {
             gameOver = true;
             gameOverScreen.SetActive(true);
         }
     }
 
-    public bool isGameOver() {
+    public bool isGameOver()
+    {
         return gameOver;
     }
 
-    private IEnumerator block() {
+    private IEnumerator block()
+    {
         blockEverything = true;
-        yield return new WaitForSecondsRealtime(1);
+        yield return new WaitForSeconds(1);
         blockEverything = false;
     }
 }

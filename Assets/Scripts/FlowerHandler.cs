@@ -7,7 +7,6 @@ using UnityEditor;
 
 public class FlowerHandler : MonoBehaviour
 {
-    public GameObject aimove;
     public GameObject flowersPlaced;
     private List<int> unusedTiles = new List<int>();
     private GameObject[,] tiles;
@@ -37,8 +36,8 @@ public class FlowerHandler : MonoBehaviour
     public void manualUpdate()
     {
         placeNextThreeFlowers();
+        Debug.Log("Flowers placed");
         flowersPlaced.SetActive(true);
-        aimove.SetActive(false);
         chooseNextThreeFlowers();
     }
 
@@ -81,7 +80,8 @@ public class FlowerHandler : MonoBehaviour
         return moveFromTileToTile(fromTile, toTile);
     }
 
-    public int moveFromTileToTile(int fromTile, int toTile) {
+    public int moveFromTileToTile(int fromTile, int toTile)
+    {
         int result = canMoveFromTo(fromTile, toTile);
 
         GameObject flower = flowers[fromTile / 9, fromTile % 9];
@@ -271,11 +271,13 @@ public class FlowerHandler : MonoBehaviour
         return false;
     }
 
-    public GameObject[,] getFlowers() {
+    public GameObject[,] getFlowers()
+    {
         return flowers;
     }
 
-    public GameObject[] getNextThreeFlowers() {
+    public GameObject[] getNextThreeFlowers()
+    {
         return nextThreeFlowers;
     }
 }
