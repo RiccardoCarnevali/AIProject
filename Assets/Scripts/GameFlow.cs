@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class GameFlow : MonoBehaviour
 {
-    public GameObject flowersPlaced;
+    public GameObject aiThinking;
     private GameObject selectedFlower = null;
     private FlowerHandler flowerGenerator;
     private TilesGenerator tilesGenerator;
@@ -31,7 +31,6 @@ public class GameFlow : MonoBehaviour
         {
             if (nextStep)
             {
-                Debug.Log("next step");
                 flowerGenerator.manualUpdate();
                 if (gameOver)
                     return;
@@ -42,12 +41,11 @@ public class GameFlow : MonoBehaviour
             {
                 if (AI.getInstance(this).isMoveMade())
                 {
-                    Debug.Log("making move");
                     nextMove = AI.getInstance(this).getNextMove();
                     moveFromTileToTile(nextMove.getX1() * 9 + nextMove.getY1(), nextMove.getX2() * 9 + nextMove.getY2());
                     AI.getInstance(this).makeMove();
                     //Debug.Log("moved from " + nextMove.getX1() + "," + nextMove.getY1() + " " + nextMove.getX2() + "," + nextMove.getY2());
-                    flowersPlaced.SetActive(false);
+                    aiThinking.SetActive(false);
                     StartCoroutine("block");
                 }
                 else if (!AI.getInstance(this).isMoveBeingMade())
@@ -84,6 +82,7 @@ public class GameFlow : MonoBehaviour
                     {
                         nexts.Add(new Next(entry.Key, entry.Value));
                     }
+                    aiThinking.SetActive(true);
                     AI.getInstance(this).startNextMove(tiles, nexts.ToArray());
                 }
             }

@@ -7,7 +7,6 @@ using UnityEditor;
 
 public class FlowerHandler : MonoBehaviour
 {
-    public GameObject flowersPlaced;
     private List<int> unusedTiles = new List<int>();
     private GameObject[,] tiles;
     public GameObject[] flowersPrefabs = new GameObject[7];
@@ -36,8 +35,6 @@ public class FlowerHandler : MonoBehaviour
     public void manualUpdate()
     {
         placeNextThreeFlowers();
-        Debug.Log("Flowers placed");
-        flowersPlaced.SetActive(true);
         chooseNextThreeFlowers();
     }
 

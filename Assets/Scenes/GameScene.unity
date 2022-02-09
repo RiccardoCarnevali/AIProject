@@ -1527,7 +1527,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9524a6e568ef287459b0c907bfe2fb3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flowersPlaced: {fileID: 1584873017}
   flowersPrefabs:
   - {fileID: 6144400956711158083, guid: 8a03ae44ffc58bf4d944ad4bd48d853e, type: 3}
   - {fileID: 4714251533146370275, guid: f616e6391bc9bcd4cb8a0c3545eb01ac, type: 3}
@@ -1576,7 +1575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2166973c44352440a3d887fcfa4724d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flowersPlaced: {fileID: 1584873017}
+  aiThinking: {fileID: 1584873017}
   gameOverScreen: {fileID: 325218030}
 --- !u!1 &1436168086
 GameObject:

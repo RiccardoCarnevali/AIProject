@@ -19,7 +19,7 @@ public class AI {
     private AI(GameFlow gameFlow) {
         this.gameFlow = gameFlow;
 
-        handler = new DesktopHandler(new DLV2DesktopService(Directory.GetCurrentDirectory() + "/lib/dlv2.exe"));
+        handler = new DesktopHandler(new DLV2DesktopService(Directory.GetCurrentDirectory() + "/lib/dlv2"));
         ASPMapper.Instance.RegisterClass(typeof(Tile));
         ASPMapper.Instance.RegisterClass(typeof(Next));
         ASPMapper.Instance.RegisterClass(typeof(MakeMove));
